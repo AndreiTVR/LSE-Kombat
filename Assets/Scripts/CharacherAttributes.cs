@@ -17,6 +17,10 @@ public class CharacherAttributes : MonoBehaviour
 
  public  int FistDamage=5f;
  public int FootDamage=7f;
+ public int fireSphereDamage = 20;
+ public float fireSphereRange = 100;
+ public float invincibilityDuration = 5f;
+ bool isInvincible = false;
 [SerializeField] BaseBasicAbilities baseabilities;
  
 public void FistDealDamage()
@@ -30,8 +34,42 @@ public void FootDealDamage()
 public void CastUlt(){
 
 }
+public void CastFireSphereUlt() // Da dmg tuturor inamicilor in raza fireSphereRange
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, fireSphereRange);
+        foreach (var hitCollider in hitColliders)
+        {
+            CharacherAttributes enemy = hitCollider.GetComponent<CharacherAttributes>();
+            if (enemy != null && enemy != this)
+            {
+                enemy.TakeDamage(fireSphereDamage);
+            }
+        }
+    }
+
+public void CastInvincibilityUlt()
+    {
+        StartCoroutine(InvincibilityRoutine(invincibilityDuration)); // x secunde de invincibilitate
+    }
+
+    IEnumerator InvincibilityRoutine(float duration)
+    {
+        
+        isInvincible = true;
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        isInvincible = false;
+        
+    }
+
 public void TakeDamage(int damage)
 {
-    hp -= damage;
+    if(!isInvincible) hp -= damage;
 }
 }
