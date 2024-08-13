@@ -12,18 +12,17 @@ public class CharacherAttributes : MonoBehaviour
  
  public float maxUltimate=100f;
 
- public float enemyAttackUlt = 10f;
- public float myAttackUlt = 15f;
+ public float enemyAttackUltCharge = 10f;
+ public float myAttackUltCharge = 15f;
 
- public  int FistDamage=5f;
- public int FootDamage=7f;
- public int fireSphereDamage = 20;
- public float fireSphereRange = 100;
- public float invincibilityDuration = 5f;
- bool isInvincible = false;
+ public  int FistDamage=5;
+ public  int FootDamage=7;
+ //public int fireSphereDamage = 20;
+ //public float fireSphereRange = 100;
+ //public float invincibilityDuration = 5f;
+ // bool isInvincible = false;
 [SerializeField] BaseBasicAbilities baseabilities;
- 
-public void FistDealDamage()
+    public void FistDealDamage()
 {
  
 }
@@ -34,7 +33,7 @@ public void FootDealDamage()
 public void CastUlt(){
 
 }
-public void CastFireSphereUlt() // Da dmg tuturor inamicilor in raza fireSphereRange
+/**public void CastFireSphereUlt() // Da dmg tuturor inamicilor in raza fireSphereRange
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, fireSphereRange);
         foreach (var hitCollider in hitColliders)
@@ -46,8 +45,8 @@ public void CastFireSphereUlt() // Da dmg tuturor inamicilor in raza fireSphereR
             }
         }
     }
-
-public void CastInvincibilityUlt()
+*/
+/**public void CastInvincibilityUlt()
     {
         StartCoroutine(InvincibilityRoutine(invincibilityDuration)); // x secunde de invincibilitate
     }
@@ -62,14 +61,15 @@ public void CastInvincibilityUlt()
         {
             timer += Time.deltaTime;
             yield return null;
+            Debug.Log(timer);
         }
 
         isInvincible = false;
         
     }
-
+*/
 public void TakeDamage(int damage)
 {
-    if(!isInvincible) hp -= damage;
+    hp -= damage;
 }
 }
