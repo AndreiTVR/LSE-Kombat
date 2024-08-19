@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using System;
+using UnityEngine;
 
 namespace LSEKombat.Systems.Input
 {
@@ -8,19 +9,12 @@ namespace LSEKombat.Systems.Input
             This class handles inputs from the Player
         */
 
-
-        [Header("KEYS")]
-        [SerializeField]private KeyCode MoveLeft_KeyCode;
-        [SerializeField]private KeyCode MoveRight_KeyCode;
-        [SerializeField]private KeyCode Jump_KeyCode;
-        [SerializeField]private KeyCode Crouch_KeyCode;
-
         //debug variables
 
         private int m_movementSide;         // -1 -> Player moves Left ; 1 -> Player moves Right
 
+        
         //event delegates
-
         public delegate void MovementInputUpdateHandler     (int MovementSide);
         public delegate void JumpInputUpdateHandler         (bool Jump);
         public delegate void CrouchInputUpdateHandler       (bool Crouch);
@@ -40,44 +34,51 @@ namespace LSEKombat.Systems.Input
         private void Update()
         {
             HandleLeftRightMovementInput();
-            HandleJumpInput();
-            HandleCrouchInput();
+
+            HandleUpDownMovementInput();
 
         }
+
+        private void HandleUpDownMovementInput()
+        {
+            float yAxis = GetAxis("Vertical");
+
+            HandleJumpInput(yAxis);
+            HandleCrouchInput(yAxis);
+        }
+
         private void HandleLeftRightMovementInput()
         {
-            if (GetKey(MoveLeft_KeyCode))
-            {
-                m_movementSide = -1;
-            }
+            float xAxis = GetAxis("Horizontal");
 
-            if (GetKey(MoveRight_KeyCode))
-            {
+            //for anyone reading this,see if you can optimize these here if's.They look horrible
+            if(xAxis > 0)
                 m_movementSide = 1;
-            }
-
-            if(!GetKey(MoveLeft_KeyCode) && !GetKey(MoveRight_KeyCode))
-            {
+            else if(xAxis < 0)
+                m_movementSide = -1;
+            else
                 m_movementSide = 0;
-            }
 
             OnMovementInputUpdate?.Invoke(m_movementSide);
         }
-        private void HandleJumpInput()
+        private void HandleJumpInput(float yAxis)
         {
-            OnJumpInputUpdate?.Invoke(GetKeyDown(Jump_KeyCode));
+            if(yAxis > 0)
+                OnJumpInputUpdate?.Invoke(true);
+            else
+                OnJumpInputUpdate?.Invoke(false);
         }
-        private void HandleCrouchInput()
+        private void HandleCrouchInput(float yAxis)
         {
-            OnCrouchInputUpdate?.Invoke(GetKey(Crouch_KeyCode));
+            if(yAxis < 0)
+                OnCrouchInputUpdate?.Invoke(true);
+            else
+                OnCrouchInputUpdate?.Invoke(false);
         }
-        private bool GetKey(KeyCode keyCode)
+
+        private float GetAxis(String AxisName)
         {
-            return (UnityEngine.Input.GetKey(keyCode));
-        }
-        private bool GetKeyDown(KeyCode keyCode)
-        {
-            return (UnityEngine.Input.GetKeyDown(keyCode));
+            return UnityEngine.Input.GetAxis(AxisName);
         }
     }
 }
