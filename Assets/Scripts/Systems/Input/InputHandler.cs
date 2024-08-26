@@ -18,11 +18,15 @@ namespace LSEKombat.Systems.Input
         public delegate void MovementInputUpdateHandler     (int MovementSide);
         public delegate void JumpInputUpdateHandler         (bool Jump);
         public delegate void CrouchInputUpdateHandler       (bool Crouch);
+        public delegate void PunchAttackInputUpdateHandler  (bool PunchAttack);
+        public delegate void KickAttackInputUpdateHandler   (bool KickAttack);
 
         //events
-        public event MovementInputUpdateHandler OnMovementInputUpdate;
-        public event JumpInputUpdateHandler     OnJumpInputUpdate;
-        public event CrouchInputUpdateHandler   OnCrouchInputUpdate;
+        public event MovementInputUpdateHandler    OnMovementInputUpdate;
+        public event JumpInputUpdateHandler        OnJumpInputUpdate;
+        public event CrouchInputUpdateHandler      OnCrouchInputUpdate;
+        public event PunchAttackInputUpdateHandler OnPunchInputUpdate;
+        public event KickAttackInputUpdateHandler  OnKickInputUpdate;
 
         // Start is called before the first frame update
         private void Start()
@@ -37,6 +41,7 @@ namespace LSEKombat.Systems.Input
 
             HandleUpDownMovementInput();
 
+            HandleCombatInput();
         }
 
         private void HandleUpDownMovementInput()
@@ -76,9 +81,21 @@ namespace LSEKombat.Systems.Input
                 OnCrouchInputUpdate?.Invoke(false);
         }
 
+        private void HandleCombatInput()
+        {
+            OnPunchInputUpdate?.Invoke(GetButtonDown("Fire1"));             //by default,it should bind to left mouse button
+            OnKickInputUpdate?.Invoke(GetButtonDown("Fire2"));              //by default it should bind to right mouse button
+        }
+        
+
         private float GetAxis(String AxisName)
         {
             return UnityEngine.Input.GetAxis(AxisName);
+        }
+
+        private bool GetButtonDown(String ButtonName)
+        {
+            return UnityEngine.Input.GetButtonDown(ButtonName);
         }
     }
 }
