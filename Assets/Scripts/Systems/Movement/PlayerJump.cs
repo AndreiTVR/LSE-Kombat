@@ -43,7 +43,6 @@ namespace LSEKombat.Systems.Movement
             {
                 m_hasJumped = true;
                 m_jumpVelocity += JumpAcceleration * Time.deltaTime;
-                Debug.Log("Check");
             }
         }
 
