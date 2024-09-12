@@ -3,11 +3,11 @@ using UnityEngine;
 public class HealUlt : BaseUlt 
 {
     public int healAmount = 30;
-    private CharacterAttributes player;
+    private CharacherAttributes player;
 
     void Start()
     {
-        player = GetComponent<CharacterAttributes>();
+        player = GetComponent<CharacherAttributes>();
     }
 
     public override void CastUltimate()

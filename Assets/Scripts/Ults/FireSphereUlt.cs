@@ -10,7 +10,7 @@ public class FireSphereUlt : BaseUlt
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, fireSphereRadius);
         foreach (var hitCollider in hitColliders)
         {
-            CharacterAttributes enemy = hitCollider.GetComponent<CharacterAttributes>();
+            CharacherAttributes enemy = hitCollider.GetComponent<CharacherAttributes>();
             if(enemy != null && enemy != this)
             {
                 enemy.TakeDamage(fireSphereDamage);
