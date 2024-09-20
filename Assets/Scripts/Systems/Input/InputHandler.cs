@@ -9,6 +9,9 @@ namespace LSEKombat.Systems.Input
             This class handles inputs from the Player
         */
 
+        //references
+        [SerializeField] private InputActionsScriptableObject InputActions;
+
         //debug variables
 
         private int m_movementSide;         // -1 -> Player moves Left ; 1 -> Player moves Right
@@ -32,6 +35,11 @@ namespace LSEKombat.Systems.Input
         private void Start()
         {
             m_movementSide = 0;
+
+            if(InputActions == null)
+            {
+                Debug.LogError("INPUT ERROR : NO INPUT ACTIONS FOR : "  + this.gameObject.name);
+            }
         }
 
         // Update is called once per frame
@@ -46,7 +54,15 @@ namespace LSEKombat.Systems.Input
 
         private void HandleUpDownMovementInput()
         {
-            float yAxis = GetAxis("Vertical");
+            float yAxis = 0;
+
+            if(GetKeyDown(InputActions.Jump_Key))
+            {
+                yAxis = 1;
+            }else if(GetKey(InputActions.Crouch_Key))
+            {
+                yAxis = -1;
+            }
 
             HandleJumpInput(yAxis);
             HandleCrouchInput(yAxis);
@@ -54,15 +70,15 @@ namespace LSEKombat.Systems.Input
 
         private void HandleLeftRightMovementInput()
         {
-            float xAxis = GetAxis("Horizontal");
+            m_movementSide = 0;
 
-            //for anyone reading this,see if you can optimize these here if's.They look horrible
-            if(xAxis > 0)
+            if(GetKey(InputActions.MoveRight_Key))
+            {
                 m_movementSide = 1;
-            else if(xAxis < 0)
+            }else if(GetKey(InputActions.MoveLeft_Key))
+            {
                 m_movementSide = -1;
-            else
-                m_movementSide = 0;
+            }
 
             OnMovementInputUpdate?.Invoke(m_movementSide);
         }
@@ -83,8 +99,10 @@ namespace LSEKombat.Systems.Input
 
         private void HandleCombatInput()
         {
-            OnPunchInputUpdate?.Invoke(GetButtonDown("Fire1"));             //by default,it should bind to left mouse button
-            OnKickInputUpdate?.Invoke(GetButtonDown("Fire2"));              //by default it should bind to right mouse button
+            OnPunchInputUpdate?.Invoke(GetKeyDown(InputActions.Punch_Key));             
+            OnKickInputUpdate?.Invoke(GetKeyDown(InputActions.Kick_Key));
+
+            // TODO add ability input here              
         }
         
 
@@ -96,6 +114,16 @@ namespace LSEKombat.Systems.Input
         private bool GetButtonDown(String ButtonName)
         {
             return UnityEngine.Input.GetButtonDown(ButtonName);
+        }
+
+        private bool GetKeyDown(KeyCode Key)
+        {
+            return UnityEngine.Input.GetKeyDown(Key);
+        }
+
+        private bool GetKey(KeyCode Key)
+        {
+            return UnityEngine.Input.GetKey(Key);
         }
     }
 }
