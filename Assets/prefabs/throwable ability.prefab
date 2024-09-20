@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6102947619117102577}
   - component: {fileID: -2851535970916656131}
   m_Layer: 0
-  m_Name: Abiity
+  m_Name: throwable ability
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
