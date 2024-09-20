@@ -38,6 +38,7 @@ namespace LSEKombat.Systems.Movement
 
         private void ApplyJumpImpulse(bool Jump)
         {
+            
             //apply a small impulse to the player to get them off the ground
             if(Jump && m_isGrounded)
             {
@@ -49,6 +50,7 @@ namespace LSEKombat.Systems.Movement
         // Update is called once per frame
         private void Update()
         {
+            
             //increase the speed (up to JumpMaxVelocity) to get a smoother jump
             if(m_hasJumped && m_jumpVelocity < JumpMaxVelocity)
             {
