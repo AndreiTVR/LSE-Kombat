@@ -1,5 +1,4 @@
 using System;
-using System.Security.Cryptography;
 using UnityEngine;
 
 namespace LSEKombat.Systems.Input
@@ -10,11 +9,13 @@ namespace LSEKombat.Systems.Input
             This class handles inputs from the Player
         */
 
+        //references
+        [SerializeField] private InputActionsScriptableObject InputActions;
+
         //debug variables
 
         private int m_movementSide;         // -1 -> Player moves Left ; 1 -> Player moves Right
 
-        [SerializeField] GameObject Player; 
         
         //event delegates
         public delegate void MovementInputUpdateHandler     (int MovementSide);
@@ -22,8 +23,6 @@ namespace LSEKombat.Systems.Input
         public delegate void CrouchInputUpdateHandler       (bool Crouch);
         public delegate void PunchAttackInputUpdateHandler  (bool PunchAttack);
         public delegate void KickAttackInputUpdateHandler   (bool KickAttack);
-        
-        public delegate void CastFirstAbilityUpdateHandler (bool CastFirst);
 
         //events
         public event MovementInputUpdateHandler    OnMovementInputUpdate;
@@ -32,12 +31,15 @@ namespace LSEKombat.Systems.Input
         public event PunchAttackInputUpdateHandler OnPunchInputUpdate;
         public event KickAttackInputUpdateHandler  OnKickInputUpdate;
 
-        public event CastFirstAbilityUpdateHandler OnCastFirstUpdate;
-
         // Start is called before the first frame update
         private void Start()
         {
             m_movementSide = 0;
+
+            if(InputActions == null)
+            {
+                Debug.LogError("INPUT ERROR : NO INPUT ACTIONS FOR : "  + this.gameObject.name);
+            }
         }
 
         // Update is called once per frame
@@ -48,12 +50,19 @@ namespace LSEKombat.Systems.Input
             HandleUpDownMovementInput();
 
             HandleCombatInput();
-            FirstAbilityCast();
         }
 
         private void HandleUpDownMovementInput()
         {
-            float yAxis = GetAxis("Vertical");
+            float yAxis = 0;
+
+            if(GetKeyDown(InputActions.Jump_Key))
+            {
+                yAxis = 1;
+            }else if(GetKey(InputActions.Crouch_Key))
+            {
+                yAxis = -1;
+            }
 
             HandleJumpInput(yAxis);
             HandleCrouchInput(yAxis);
@@ -61,27 +70,20 @@ namespace LSEKombat.Systems.Input
 
         private void HandleLeftRightMovementInput()
         {
-            float xAxis = GetAxis("Horizontal");
+            m_movementSide = 0;
 
-            //for anyone reading this,see if you can optimize these here if's.They look horrible
-            
-            if(xAxis > 0)
+            if(GetKey(InputActions.MoveRight_Key))
+            {
                 m_movementSide = 1;
-                
-            else if(xAxis < 0)
+            }else if(GetKey(InputActions.MoveLeft_Key))
+            {
                 m_movementSide = -1;
-            else
-                m_movementSide = 0;
+            }
 
-             if (m_movementSide != 0) // Flip only if there is movement
-                 
-              FlipCharacter(m_movementSide);
-                
             OnMovementInputUpdate?.Invoke(m_movementSide);
         }
         private void HandleJumpInput(float yAxis)
         {
-            
             if(yAxis > 0)
                 OnJumpInputUpdate?.Invoke(true);
             else
@@ -97,16 +99,10 @@ namespace LSEKombat.Systems.Input
 
         private void HandleCombatInput()
         {
-           
-            OnPunchInputUpdate?.Invoke(GetButtonDown("Fire1"));             //by default,it should bind to left mouse button
-            OnKickInputUpdate?.Invoke(GetButtonDown("Fire2"));              //by default it should bind to right mouse button
-        }
-        private void FirstAbilityCast(){
-           if(UnityEngine.Input.GetKeyDown(KeyCode.F)){
-                OnCastFirstUpdate?.Invoke(true);
-           }else{
-                OnCastFirstUpdate?.Invoke(false);
-           }
+            OnPunchInputUpdate?.Invoke(GetKeyDown(InputActions.Punch_Key));             
+            OnKickInputUpdate?.Invoke(GetKeyDown(InputActions.Kick_Key));
+
+            // TODO add ability input here              
         }
         
 
@@ -119,26 +115,15 @@ namespace LSEKombat.Systems.Input
         {
             return UnityEngine.Input.GetButtonDown(ButtonName);
         }
-        
-        private void FlipCharacter(int movementSide)
-                {
-    Vector3 characterScale = Player.transform.localScale;
 
-    // Flip character if moving left or right
-    if (movementSide == -1 && characterScale.x > 0)
-    {
-        // Flip to face left
-        characterScale.x = -Mathf.Abs(characterScale.x);
-    }
-    else if (movementSide == 1 && characterScale.x < 0)
-    {
-        // Flip to face right
-        characterScale.x = Mathf.Abs(characterScale.x);
-    }
+        private bool GetKeyDown(KeyCode Key)
+        {
+            return UnityEngine.Input.GetKeyDown(Key);
+        }
 
-    // Apply the new scale
-    Player.transform.localScale = characterScale;
-}
-
+        private bool GetKey(KeyCode Key)
+        {
+            return UnityEngine.Input.GetKey(Key);
+        }
     }
 }

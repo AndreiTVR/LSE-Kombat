@@ -1,75 +1,67 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace LSEKombat.Systems.Movement
 {
     [RequireComponent(typeof(Input.InputHandler))]
     [RequireComponent(typeof(GroundChecker))]
-    [RequireComponent(typeof(Physics.VelocityHandler))]
+    [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerJump : MonoBehaviour
     {
         /*
             This class handles jumping behaviour for the player
         */
+
         [Header("SETTINGS")]
-        [SerializeField]private float JumpMaxVelocity;
-        [SerializeField]private float JumpAcceleration;
+        [SerializeField] private float JumpForce;
+        [Range(0.1f,10f)][SerializeField] private float JumpCooldown;
+
+        //references
+        private Rigidbody2D m_rb;
 
         //debug
-        private bool m_isGrounded;      
-        private bool m_hasJumped;           //is the Player mid-jump?
-        private float m_jumpVelocity;
-        private Physics.VelocityHandler m_velocityHandler;
+        private bool m_isGrounded = true;
+        private bool m_cooldownPassed = true;
+        private bool m_canJump = true;
+        
 
-        // Start is called before the first frame update
         private void Start()
         {
-            GetComponent<Input.InputHandler>().OnJumpInputUpdate += ApplyJumpImpulse;
+            GetComponent<Input.InputHandler>().OnJumpInputUpdate += Jump;
             GetComponent<GroundChecker>().OnGroundCheckUpdate += SetGroundedState;
-            m_velocityHandler = GetComponent<Physics.VelocityHandler>();
 
-            m_hasJumped = false;
-            m_jumpVelocity = 0;
+            m_rb = GetComponent<Rigidbody2D>();
+        }
+
+        private void Jump(bool Jump)
+        {
+            if(Jump && m_canJump)
+            {
+                m_rb.AddForce(Vector2.up * JumpForce , ForceMode2D.Impulse);
+
+                m_cooldownPassed = false;
+
+                Invoke(nameof(ResetCooldown) , JumpCooldown);
+            }
         }
 
         private void SetGroundedState(bool IsGrounded)
         {
             m_isGrounded = IsGrounded;
-        }
-
-        private void ApplyJumpImpulse(bool Jump)
-        {
             
-            //apply a small impulse to the player to get them off the ground
-            if(Jump && m_isGrounded)
-            {
-                m_hasJumped = true;
-                m_jumpVelocity += JumpAcceleration * Time.deltaTime;
-            }
+            m_canJump = m_isGrounded && m_cooldownPassed;
         }
 
-        // Update is called once per frame
-        private void Update()
+        private void ResetCooldown()
         {
-            
-            //increase the speed (up to JumpMaxVelocity) to get a smoother jump
-            if(m_hasJumped && m_jumpVelocity < JumpMaxVelocity)
-            {
-                m_jumpVelocity += JumpAcceleration * Time.deltaTime;
-                m_velocityHandler.AddVelocity(Vector2.up * m_jumpVelocity);
-                
-            }
-
-            //reset jump behaviour when the player touches the ground
-            if(m_isGrounded && m_jumpVelocity >= JumpMaxVelocity)
-            {
-                m_jumpVelocity = 0;
-                m_hasJumped = false;
-            }
+            m_cooldownPassed = true;
         }
+
+        // 'nuff said,if the player is grounded and the cooldown has passed,they may jump
 
         private void OnDisable()
         {
-            GetComponent<Input.InputHandler>().OnJumpInputUpdate -= ApplyJumpImpulse;
+            GetComponent<Input.InputHandler>().OnJumpInputUpdate -= Jump;
             GetComponent<GroundChecker>().OnGroundCheckUpdate -= SetGroundedState;
         }
     }
