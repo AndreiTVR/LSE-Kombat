@@ -23,8 +23,9 @@ namespace LSEKombat.Systems.Input
         public delegate void CrouchInputUpdateHandler       (bool Crouch);
         public delegate void PunchAttackInputUpdateHandler  (bool PunchAttack);
         public delegate void KickAttackInputUpdateHandler   (bool KickAttack);
-
+        public delegate void CastFirstUpdateHandler(bool CastFirst);
         //events
+        public event CastFirstUpdateHandler OnCastFirstUpdate;
         public event MovementInputUpdateHandler    OnMovementInputUpdate;
         public event JumpInputUpdateHandler        OnJumpInputUpdate;
         public event CrouchInputUpdateHandler      OnCrouchInputUpdate;
@@ -101,8 +102,9 @@ namespace LSEKombat.Systems.Input
         {
             OnPunchInputUpdate?.Invoke(GetKeyDown(InputActions.Punch_Key));             
             OnKickInputUpdate?.Invoke(GetKeyDown(InputActions.Kick_Key));
-
-            // TODO add ability input here              
+            OnCastFirstUpdate?.Invoke(GetKeyDown(InputActions.FirstAbility_Key));
+            OnCastFirstUpdate?.Invoke(GetKeyDown(InputActions.SecondAbility_Key));
+            OnCastFirstUpdate?.Invoke(GetKeyDown(InputActions.Ultimate_Key));
         }
         
 
