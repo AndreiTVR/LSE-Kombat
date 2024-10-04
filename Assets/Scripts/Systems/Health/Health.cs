@@ -8,24 +8,22 @@ namespace LSEKombat.Systems.Health
             This class holds the health amount for an entity.
         */
 
-        [SerializeField]private float MaxHealth;
-        private float m_currentHealth;
+        [SerializeField]private int MaxHealth;
+        private int m_currentHealth;
 
         private void OnEnable()
         {
             m_currentHealth = MaxHealth;
         }
 
-        public void IncreaseHealth(float amount)
+        public void IncreaseHealth(int amount)
         {
-            m_currentHealth += amount;
-            m_currentHealth = Mathf.Clamp(m_currentHealth,0,MaxHealth);
+            m_currentHealth += amount;       
         }
 
-        public void DecreaseHealth(float amount)
+        public void DecreaseHealth(int amount)
         {
             m_currentHealth -= amount;
-            m_currentHealth = Mathf.Clamp(m_currentHealth,0,MaxHealth);
         }
     }
 }

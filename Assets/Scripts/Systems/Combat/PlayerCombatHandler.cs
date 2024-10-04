@@ -88,35 +88,20 @@ namespace LSEKombat.Systems.Combat
         {
             if(m_PunchAttack)
             {
-                if(m_IsCrouched)
-                {
-                    //do crouched punch
-                    Debug.Log("Crouch Punch");
-                    return;
-                }
+               
 
                 if(m_IsGrounded && !m_IsCrouched)
                 {
-                    //do normal punch
-                    Debug.Log("Normal Punch");
+                    
+                    
                     return;
                 }
 
-                if(!m_IsGrounded)
-                {
-                    //do in-air punch
-                    Debug.Log("In-Air Punch");
-                    return;
-                }
+               
             }
             else if(m_KickAttack)
             {
-                if(m_IsCrouched)
-                {
-                    //do crouched kick
-                    Debug.Log("Crouch Kick");
-                    return;
-                }
+               
 
                 if(m_IsGrounded && !m_IsCrouched)
                 {
@@ -125,12 +110,7 @@ namespace LSEKombat.Systems.Combat
                     return;
                 }
 
-                if(!m_IsGrounded)
-                {
-                    //do in-air kick
-                    Debug.Log("In-Air Kick");
-                    return;
-                }
+         
             }
         }
     }

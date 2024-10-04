@@ -31,12 +31,12 @@ namespace LSEKombat.Systems.Input
         public event CrouchInputUpdateHandler      OnCrouchInputUpdate;
         public event PunchAttackInputUpdateHandler OnPunchInputUpdate;
         public event KickAttackInputUpdateHandler  OnKickInputUpdate;
-
+        SpriteRenderer sprite;
         // Start is called before the first frame update
         private void Start()
         {
             m_movementSide = 0;
-
+            sprite = GetComponent<SpriteRenderer>();
             if(InputActions == null)
             {
                 Debug.LogError("INPUT ERROR : NO INPUT ACTIONS FOR : "  + this.gameObject.name);
@@ -75,10 +75,12 @@ namespace LSEKombat.Systems.Input
 
             if(GetKey(InputActions.MoveRight_Key))
             {
+                sprite.flipX = false;
                 m_movementSide = 1;
             }else if(GetKey(InputActions.MoveLeft_Key))
             {
                 m_movementSide = -1;
+                sprite.flipX=true;
             }
 
             OnMovementInputUpdate?.Invoke(m_movementSide);

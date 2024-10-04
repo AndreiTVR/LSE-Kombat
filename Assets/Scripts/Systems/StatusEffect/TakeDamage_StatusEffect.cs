@@ -8,7 +8,7 @@ namespace LSEKombat.Systems.StatusEffect
         [SerializeField]private float RaycastSize;
         [SerializeField]private bool DrawDebug = true;
 
-        [SerializeField]private float DamageAmount;
+        [SerializeField]private int DamageAmount;
 
         //debug
         private Vector2 m_raycastPosition;

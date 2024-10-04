@@ -7,7 +7,7 @@ namespace LSEKombat.Systems.StatusEffect
         //This class has the role of applying the different status effects on an entity.
 
 
-        public void TakeDamage(float amount)
+        public void TakeDamage(int amount)
         {
             Health.Health health = this.gameObject.GetComponent<Health.Health>();
 
@@ -17,7 +17,7 @@ namespace LSEKombat.Systems.StatusEffect
             }
         }
 
-        public void Heal(float amount)
+        public void Heal(int amount)
         {
             Health.Health health = this.gameObject.GetComponent<Health.Health>();
 
