@@ -75,12 +75,10 @@ namespace LSEKombat.Systems.Input
 
             if(GetKey(InputActions.MoveRight_Key))
             {
-                sprite.flipX = false;
                 m_movementSide = 1;
             }else if(GetKey(InputActions.MoveLeft_Key))
             {
                 m_movementSide = -1;
-                sprite.flipX=true;
             }
 
             OnMovementInputUpdate?.Invoke(m_movementSide);
